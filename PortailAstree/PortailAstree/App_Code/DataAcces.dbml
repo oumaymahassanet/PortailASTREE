@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="PortailServices" Class="DataAccesDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=localhost\SQLEXPRESS;Initial Catalog=PortailServices;Integrated Security=True" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="PortailServicesConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.adresse" Member="adresse">
+    <Type Name="adresse">
+      <Column Name="code_adresse" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="rue" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="code_postal" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="ville" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="gouvernerat" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="tel" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="fax" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="email" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Association Name="adresse_recuperationMDP" Member="recuperationMDP" ThisKey="code_adresse" OtherKey="code_adresse" Type="recuperationMDP" />
+    </Type>
+  </Table>
+  <Table Name="dbo.affecter" Member="affecter">
+    <Type Name="affecter">
+      <Column Name="code_profil" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="code_permission" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="permission_affecter" Member="permission" ThisKey="code_permission" OtherKey="code_permission" Type="permission" IsForeignKey="true" />
+      <Association Name="profil_affecter" Member="profil" ThisKey="code_profil" OtherKey="code_profil" Type="profil" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.branche" Member="branche">
+    <Type Name="branche">
+      <Column Name="Id_branche" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="libelle" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Association Name="branche_sous_branche" Member="sous_branche" ThisKey="Id_branche" OtherKey="Id_branche" Type="sous_branche" />
+    </Type>
+  </Table>
+  <Table Name="dbo.destination" Member="destination">
+    <Type Name="destination">
+      <Column Name="code_dest" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="LibelleDest" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.DetailCommande" Member="DetailCommande">
+    <Type Name="DetailCommande">
+      <Column Name="Id_detail" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="id_produit" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Qte" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="QteLivree" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Observation" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="code_service" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PU" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="reponse" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Association Name="produit_DetailCommande" Member="produit" ThisKey="id_produit" OtherKey="Id_produit" Type="produit" IsForeignKey="true" />
+      <Association Name="service_DetailCommande" Member="service" ThisKey="code_service" OtherKey="code_service" Type="service" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.notification" Member="notification">
+    <Type Name="notification">
+      <Column Name="code_notification" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="contenu_notification" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="etat" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="date_notification" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="code_service" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.partenaire" Member="partenaire">
+    <Type Name="partenaire">
+      <Column Name="code_partenaire" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="code_adresse" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="code_interaction" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="titre_partenaire" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="description_profil" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Association Name="partenaire_Utilisateur" Member="Utilisateur" ThisKey="code_partenaire" OtherKey="code_partenaire" Type="Utilisateur" />
+    </Type>
+  </Table>
+  <Table Name="dbo.permission" Member="permission">
+    <Type Name="permission">
+      <Column Name="code_permission" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="description" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Association Name="permission_affecter" Member="affecter" ThisKey="code_permission" OtherKey="code_permission" Type="affecter" />
+    </Type>
+  </Table>
+  <Table Name="dbo.produit" Member="produit">
+    <Type Name="produit">
+      <Column Name="Id_produit" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="LibelleProduit" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+      <Column Name="code_profil" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="produit_DetailCommande" Member="DetailCommande" ThisKey="Id_produit" OtherKey="id_produit" Type="DetailCommande" />
+      <Association Name="profil_produit" Member="profil" ThisKey="code_profil" OtherKey="code_profil" Type="profil" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.profil" Member="profil">
+    <Type Name="profil">
+      <Column Name="code_profil" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="description_profil" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Association Name="profil_affecter" Member="affecter" ThisKey="code_profil" OtherKey="code_profil" Type="affecter" />
+      <Association Name="profil_produit" Member="produit" ThisKey="code_profil" OtherKey="code_profil" Type="produit" />
+      <Association Name="profil_Utilisateur" Member="Utilisateur" ThisKey="code_profil" OtherKey="code_profil" Type="Utilisateur" />
+    </Type>
+  </Table>
+  <Table Name="dbo.recuperationMDP" Member="recuperationMDP">
+    <Type Name="recuperationMDP">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Hash" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Etat" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="code_adresse" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="adresse_recuperationMDP" Member="adresse" ThisKey="code_adresse" OtherKey="code_adresse" Type="adresse" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.service" Member="service">
+    <Type Name="service">
+      <Column Name="code_service" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="num_contrat" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="taux" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="id_sous_branche" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="id_type" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="etat" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+      <Column Name="date_demande" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="date_Reponse" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="reponse" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="duree" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="libelleService" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="contenu_Reclamation" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="code_dest" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="primeHTax" Type="System.Decimal" DbType="Decimal(18,3)" CanBeNull="true" />
+      <Column Name="coutPolice" Type="System.Decimal" DbType="Decimal(18,3)" CanBeNull="true" />
+      <Column Name="primeTotal" Type="System.Decimal" DbType="Decimal(18,3)" CanBeNull="true" />
+      <Column Name="tax" Type="System.Decimal" DbType="Decimal(18,3)" CanBeNull="true" />
+      <Column Name="code_utilisateur" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="service_DetailCommande" Member="DetailCommande" ThisKey="code_service" OtherKey="code_service" Type="DetailCommande" />
+      <Association Name="sous_branche_service" Member="sous_branche" ThisKey="id_sous_branche" OtherKey="Id_sous_branche" Type="sous_branche" IsForeignKey="true" />
+      <Association Name="type_service_service" Member="type_service" ThisKey="id_type" OtherKey="Id_type" Type="type_service" IsForeignKey="true" />
+      <Association Name="Utilisateur_service" Member="Utilisateur" ThisKey="code_utilisateur" OtherKey="code_utilisateur" Type="Utilisateur" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.sous_branche" Member="sous_branche">
+    <Type Name="sous_branche">
+      <Column Name="Id_sous_branche" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="libelle" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Id_branche" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="sous_branche_service" Member="service" ThisKey="Id_sous_branche" OtherKey="id_sous_branche" Type="service" />
+      <Association Name="branche_sous_branche" Member="branche" ThisKey="Id_branche" OtherKey="Id_branche" Type="branche" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.statistique" Member="statistique">
+    <Type Name="statistique">
+      <Column Name="Agence" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Annee" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Column Name="Mois" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Column Name="Branche" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="SousBranche" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="Sinistre" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Column Name="Prime" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Column Name="SP" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Column Name="Comission" Type="System.Double" DbType="Float" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.type_interaction" Member="type_interaction">
+    <Type Name="type_interaction">
+      <Column Name="code_interaction" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="libelle" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.type_service" Member="type_service">
+    <Type Name="type_service">
+      <Column Name="Id_type" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="libelle" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="famille_type" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Association Name="type_service_service" Member="service" ThisKey="Id_type" OtherKey="id_type" Type="service" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Utilisateur" Member="Utilisateur">
+    <Type Name="Utilisateur">
+      <Column Name="code_utilisateur" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Nom_utilisateur" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="login" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Mdp" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Etat" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="code_profil" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="code_partenaire" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Image" Type="System.Data.Linq.Binary" DbType="Binary(50)" CanBeNull="true" UpdateCheck="Never" />
+      <Association Name="Utilisateur_service" Member="service" ThisKey="code_utilisateur" OtherKey="code_utilisateur" Type="service" />
+      <Association Name="profil_Utilisateur" Member="profil" ThisKey="code_profil" OtherKey="code_profil" Type="profil" IsForeignKey="true" />
+      <Association Name="partenaire_Utilisateur" Member="partenaire" ThisKey="code_partenaire" OtherKey="code_partenaire" Type="partenaire" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>

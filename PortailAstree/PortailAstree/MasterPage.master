@@ -1,0 +1,610 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="Astree.MasterPage" %>
+
+
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta charset="utf-8" />
+		<title>Astree</title>
+
+		<meta name="description" content="overview &amp; stats" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+       
+     
+	<link rel="icon" href="images/A1.png" type="image/ico" />
+     <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- Font Awesome -->
+    <link href="vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet"/>
+    <!-- NProgress -->
+    <link href="vendors/nprogress/nprogress.css" rel="stylesheet"/>
+    <!-- iCheck -->
+    <link href="vendors/iCheck/skins/flat/green.css" rel="stylesheet"/>
+	
+    <!-- bootstrap-progressbar -->
+    <link href="vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet"/>
+    <!-- JQVMap -->
+    <link href="vendors/jqvmap/dist/jqvmap.min.css" rel="stylesheet"/>
+    <!-- bootstrap-daterangepicker -->
+    <link href="vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet"/>
+
+    <!-- Custom Theme Style -->
+    <link href="build/css/custom.min.css" rel="stylesheet"/>
+
+		
+		<%--<script src="assets/js/ace-extra.min.js"></script>--%>
+
+		<%--<script type="text/javascript">
+            jQuery(function ($) {
+
+                $('#simple-colorpicker-1').ace_colorpicker({ pull_right: true }).on('change', function () {
+                    var color_class = $(this).find('option:selected').data('class');
+                    var new_class = 'widget-box';
+                    if (color_class != 'default') new_class += ' widget-color-' + color_class;
+                    $(this).closest('.widget-box').attr('class', new_class);
+                });
+
+
+                // scrollables
+                $('.scrollable').each(function () {
+                    var $this = $(this);
+                    $(this).ace_scroll({
+                        size: $this.attr('data-size') || 100,
+                        //styleClass: 'scroll-left scroll-margin scroll-thin scroll-dark scroll-light no-track scroll-visible'
+                    });
+                });
+                $('.scrollable-horizontal').each(function () {
+                    var $this = $(this);
+                    $(this).ace_scroll(
+                        {
+                            horizontal: true,
+                            styleClass: 'scroll-top',//show the scrollbars on top(default is bottom)
+                            size: $this.attr('data-size') || 500,
+                            mouseWheelLock: true
+                        }
+                    ).css({ 'padding-top': 12 });
+                });
+
+                $(window).on('resize.scroll_reset', function () {
+                    $('.scrollable-horizontal').ace_scroll('reset');
+                });
+
+
+                $('#id-checkbox-vertical').prop('checked', false).on('click', function () {
+                    $('#widget-toolbox-1').toggleClass('toolbox-vertical')
+                        .find('.btn-group').toggleClass('btn-group-vertical')
+                        .filter(':first').toggleClass('hidden')
+                        .parent().toggleClass('btn-toolbar')
+                });
+
+				/**
+				//or use slimScroll plugin
+				$('.slim-scrollable').each(function () {
+					var $this = $(this);
+					$this.slimScroll({
+						height: $this.data('height') || 100,
+						railVisible:true
+					});
+				});
+				*/
+
+
+				/**$('.widget-box').on('setting.ace.widget' , function(e) {
+					e.preventDefault();
+				});*/
+
+				/**
+				$('.widget-box').on('show.ace.widget', function(e) {
+					//e.preventDefault();
+					//this = the widget-box
+				});
+				$('.widget-box').on('reload.ace.widget', function(e) {
+					//this = the widget-box
+				});
+				*/
+
+                //$('#my-widget-box').widget_box('hide');
+
+
+
+                // widget boxes
+                // widget box drag & drop example
+                $('.widget-container-col').sortable({
+                    connectWith: '.widget-container-col',
+                    items: '> .widget-box',
+                    handle: ace.vars['touch'] ? '.widget-title' : false,
+                    cancel: '.fullscreen',
+                    opacity: 0.8,
+                    revert: true,
+                    forceHelperSize: true,
+                    placeholder: 'widget-placeholder',
+                    forcePlaceholderSize: true,
+                    tolerance: 'pointer',
+                    start: function (event, ui) {
+                        //when an element is moved, it's parent becomes empty with almost zero height.
+                        //we set a min-height for it to be large enough so that later we can easily drop elements back onto it
+                        ui.item.parent().css({ 'min-height': ui.item.height() })
+                        //ui.sender.css({'min-height':ui.item.height() , 'background-color' : '#F5F5F5'})
+                    },
+                    update: function (event, ui) {
+                        ui.item.parent({ 'min-height': '' })
+                        //p.style.removeProperty('background-color');
+
+
+                        //save widget positions
+                        var widget_order = {}
+                        $('.widget-container-col').each(function () {
+                            var container_id = $(this).attr('id');
+                            widget_order[container_id] = []
+
+
+                            $(this).find('> .widget-box').each(function () {
+                                var widget_id = $(this).attr('id');
+                                widget_order[container_id].push(widget_id);
+                                //now we know each container contains which widgets
+                            });
+                        });
+
+                        ace.data.set('demo', 'widget-order', widget_order, null, true);
+                    }
+                });
+
+
+                ///////////////////////
+
+                //when a widget is shown/hidden/closed, we save its state for later retrieval
+                $(document).on('shown.ace.widget hidden.ace.widget closed.ace.widget', '.widget-box', function (event) {
+                    var widgets = ace.data.get('demo', 'widget-state', true);
+                    if (widgets == null) widgets = {}
+
+                    var id = $(this).attr('id');
+                    widgets[id] = event.type;
+                    ace.data.set('demo', 'widget-state', widgets, null, true);
+                });
+
+
+                (function () {
+                    //restore widget order
+                    var container_list = ace.data.get('demo', 'widget-order', true);
+                    if (container_list) {
+                        for (var container_id in container_list) if (container_list.hasOwnProperty(container_id)) {
+
+                            var widgets_inside_container = container_list[container_id];
+                            if (widgets_inside_container.length == 0) continue;
+
+                            for (var i = 0; i < widgets_inside_container.length; i++) {
+                                var widget = widgets_inside_container[i];
+                                $('#' + widget).appendTo('#' + container_id);
+                            }
+
+                        }
+                    }
+
+
+                    //restore widget state
+                    var widgets = ace.data.get('demo', 'widget-state', true);
+                    if (widgets != null) {
+                        for (var id in widgets) if (widgets.hasOwnProperty(id)) {
+                            var state = widgets[id];
+                            var widget = $('#' + id);
+                            if
+							(
+                                (state == 'shown' && widget.hasClass('collapsed'))
+                                ||
+                                (state == 'hidden' && !widget.hasClass('collapsed'))
+                            ) {
+                                widget.widget_box('toggleFast');
+                            }
+                            else if (state == 'closed') {
+                                widget.widget_box('closeFast');
+                            }
+                        }
+                    }
+
+
+                    $('#main-widget-container').removeClass('invisible');
+
+
+                    //reset saved positions and states
+                    $('#reset-widgets').on('click', function () {
+                        ace.data.remove('demo', 'widget-state');
+                        ace.data.remove('demo', 'widget-order');
+                        document.location.reload();
+                    });
+
+                })();
+
+            });
+		</script>--%>
+	</head>
+
+
+<body class="nav-md">
+    <form id="form1" runat="server">
+  <%--<asp:ScriptManager ID="MainScriptManager" runat="server" />--%>
+
+        <asp:ContentPlaceHolder id="ContentPlaceHolder1"  runat="server">
+       </asp:ContentPlaceHolder>
+        <div class="top_nav navbar" style="background:#438EB9; top: 0px; left: 0px; height: 58px;" >
+                      <div class=" " style="background:#438EB9">
+                          <nav >
+                              <div class="nav toggle">
+                                  <a id="menu_toggle"><i class="fa fa-bars" style="color:aliceblue; width: 350px;">&nbsp;&nbsp;&nbsp;<asp:Label runat="server" ID="TxtTitre"></asp:Label></i></a>
+                              </div>
+                              <ul class="nav navbar-nav navbar-right">
+                                  <li class="">
+                                      <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                          <img src="images/img.jpg" alt="">
+                                          <span class=" fa fa-angle-down"></span>
+                                      </a>
+                                      <ul class="dropdown-menu dropdown-usermenu pull-right">
+                                        <%--  <li><a href="profil.aspx"> Profile</a></li>--%>
+                                          <li>
+                                              <a href="IntermidiaireSetting.aspx">
+                                                 <%-- <span class="badge bg-red pull-right">50%</span>--%>
+                                                  <span>Paramètres</span>
+                                              </a>
+                                          </li>
+                                          
+                                          <li><a href="Login.aspx"><i class="fa fa-sign-out pull-right"></i> Déconnexion</a></li>
+                                      </ul>
+                                  </li>
+                                  <li role="presentation" class="dropdown">
+                                      <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+                                          <i class="fa fa-bell-o" style="color:aliceblue"></i>
+                                          <span class="badge bg-red"><asp:label id="nbNotification" runat="server" ></asp:label></span>
+                                      </a>
+                                      <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
+                                       <li id="liDevis" runat="server">
+											<a href="AfficherDevis.aspx">
+												<div class="clearfix">
+													<span class="pull-left">
+														<i class="btn btn-xs no-hover btn-success fa fa-dollar"></i>
+														Devis
+													</span>
+													<span class="pull-right badge badge-info"><asp:label id="lblDevis" runat="server" ></asp:label></span>
+												</div>
+											</a>
+										</li>
+                                        <%--<li id="liRepIndermidiaire" runat="server">
+											<a href="RepondreCommandeIntermidiaire.aspx">
+												<div class="clearfix">
+													<span class="pull-left">
+														<i class="btn btn-xs no-hover btn-pink fa fa-comment"></i>
+														Commandes
+													</span>
+													<span class="pull-right badge badge-success"><asp:label id="lblCommande" runat="server" ></asp:label></span>
+												</div>
+											</a>
+										</li>--%>
+										<li id="liRemise" runat="server">
+											<a  id="idRemise" href="AfficherDerogation.aspx" runat="server"  onserverclick="idRemise_Click">
+												<div class="clearfix">
+													<span class="pull-left">
+														<i class="btn btn-xs no-hover btn-success fa fa-sort-numeric-desc"></i>
+														Remises
+													</span>
+													<span class="pull-right badge badge-info"><asp:label id="lblNotifRemise" runat="server" ></asp:label></span>
+												</div>
+											</a>
+										</li>
+                                       
+										
+                                        
+										<li id="liProrogatin" runat="server">
+											<a  id="idProrogation" href="AfficherDerogation.aspx" runat="server"  onserverclick="idProrogation_ServerClick">
+												<div class="clearfix">
+													<span class="pull-left">
+														<i class="btn btn-xs no-hover btn-success fa fa-pencil"></i>
+														Prorogations
+													</span>
+													<span class="pull-right badge badge-success"><asp:label id="lblNotifProrogation" runat="server" ></asp:label></span>
+												</div>
+											</a>
+										</li>
+
+										<li id="liSouscripton" runat="server">
+											<a id="idSouscription" href="AfficherDerogation.aspx" runat="server"  onserverclick="idSouscription_ServerClick">
+												<div class="clearfix">
+													<span class="pull-left">
+														<i class="btn btn-xs no-hover btn-info fa fa-key"></i>
+														Souscriptions
+													</span>
+													<span class="pull-right badge badge-info"><asp:label id="lblNotifSouscription" runat="server" ></asp:label></span>
+												</div>
+											</a>
+										</li>
+                                         <li id="liCommandeFournisseur" runat="server" >
+											<a href="RepondreCommandeFournisseur.aspx">
+												<div class="clearfix">
+													<span class="pull-left">
+														<i class="btn btn-xs no-hover btn-info fa fa-shopping-cart"></i>
+														Commandes
+													</span>
+													<span class="pull-right badge badge-info"><asp:label id="lblNotifCommandeFourn" runat="server" ></asp:label></span>
+												</div>
+											</a>
+										</li>
+                                        <li id="liCommandeInterFourn" runat="server">
+											<a href="EnvoyerCommandeAFournisseur.aspx">
+												<div class="clearfix">
+													<span class="pull-left">
+														<i class="btn btn-xs no-hover btn-info fa fa-shopping-cart"></i>
+														Réponses Fournisseurs 
+													</span>
+													<span class="pull-right badge badge-info"><asp:label id="lblNotifCommandeInterFourn" runat="server" ></asp:label></span>
+												</div>
+											</a>
+										</li>
+                                        <li id="liCommandeInter" runat="server" >
+											<a href="EnvoyerCommandeIntermidiaire.aspx">
+												<div class="clearfix">
+													<span class="pull-left">
+														<i class="btn btn-xs no-hover btn-info fa fa-shopping-cart"></i>
+														Commandes 
+													</span>
+													<span class="pull-right badge badge-info"><asp:label id="lblNotifCommandeInter" runat="server" ></asp:label></span>
+												</div>
+											</a>
+										</li>
+
+                                        <li id="liCommande" runat="server">
+											<a href="RepondreCommandeIntermidiaire.aspx">
+												<div class="clearfix">
+													<span class="pull-left">
+														<i class="btn btn-xs no-hover btn-info fa fa-shopping-cart"></i>
+														Commandes Intermidiaires
+													</span>
+													<span class="pull-right badge badge-info"><asp:label id="lblNotifCommande" runat="server" ></asp:label></span>
+												</div>
+											</a>
+										</li>
+                                         <li id="liCompteDesactive" runat="server">
+											<a href="AjouterUser.aspx">
+												<div class="clearfix">
+													<span class="pull-left">
+														<i class="btn btn-xs no-hover btn-info fa fa-lock"></i>
+														Comptes Désactivés
+													</span>
+													<span class="pull-right badge badge-info"><asp:label id="lblNotifCompteDesactive" runat="server" ></asp:label></span>
+												</div>
+											</a>
+										</li>
+                                         <li id="liAfficheReclamation" runat="server" class="">
+						<a  runat="server" onserverclick="Unnamed_ServerClick">
+							<%--<i class="menu-icon fa fa-list-alt"></i>--%>
+                            <div class="clearfix">
+							<span class="pull-left">
+                           <i class="btn btn-xs no-hover btn-info fa fa-comments"></i>
+						    Réclamation&nbsp;
+
+							</span>
+                           &nbsp;&nbsp;&nbsp;&nbsp; <span class="pull-right badge badge-info"><asp:label id="lblNotifReclamation" runat="server" ></asp:label></span>
+                           </div>
+                        </a>
+
+					</li>
+									</ul>
+								</li>
+
+
+								 
+   </ul>
+                            
+                          </nav>
+                      </div>
+        </div>
+			
+		
+
+
+        <div class="container body  ">
+              <div class="main_container ">
+
+                  <div class="col-md-3 left_col" style="top:80px" >
+                      <div class="left_col scroll-view" >
+                          
+                          <!-- menu profile quick info -->
+                          <div class="profile clearfix" >
+                              <div class="profile_pic">
+                                  <img src="images/img.jpg" alt="..." class="img-circle profile_img">
+                              </div>
+                              <div class="profile_info" >
+                                  <span>Bienvenu,</span>
+                                  <h2><asp:Label runat="server" ID="TxtUserProfil"></asp:Label></h2>
+                              </div>
+                          </div>
+                          <!-- /menu profile quick info -->
+                           <br />
+                          <!-- sidebar menu -->
+                          <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                              <div class="menu_section">
+                                  <h3>Menu</h3>
+                                  <ul class="nav side-menu">
+                                      <li id="accueil" runat="server">
+                                          <a href="index.aspx"><i class="fa fa-home"></i> Accueil </a>
+
+                                      </li>
+                                      <!-- li Statistique -->
+                                      <li id="liConsulterStatistiques" runat="server">
+                                          <a><i class="fa fa-area-chart"></i> Statistiques </a>
+                                          
+                                      </li>
+                                      <!-- li Commande -->
+                                      <li id="Commande" runat="server">
+                                          <a><i class="fa fa-shopping-cart"></i> Commandes <span class="fa fa-chevron-down"></span></a>
+                                          <ul class="nav child_menu">
+                                              <li id="EnvoiCommande" runat="server"><a href="EnvoyerCommandeIntermidiaire.aspx">Envoyer Commandes</a></li>
+                                              <li id="liCommandeRepondreInter" runat="server"><a href="RepondreCommandeIntermidiaire.aspx">Traiter Commandes</a></li>
+                                              <li id="liCommandeFour" runat="server"><a href="EnvoyerCommandeAFournisseur.aspx">Envoyer Commandes</a></li>
+                                              <li id="liCommandeRepondreFour" runat="server"><a href="RepondreCommandeFournisseur.aspx"> Traiter Commandes</a></li>
+                                              <li id="liCommandeConsultInter" runat="server" hidden="hidden"><a href="EnvoyerCommandeIntermidiaire.aspx">Consulter Commandes</a></li>
+                                              <li id="liHistorique" runat="server"><a href="HistoriqueCommande.aspx">Consulter Commande</a></li>
+                                              <li id="liCommandeConsultFour" runat="server"><a href="RepondreCommandeFournisseur.aspx">Consulter Commandes</a></li>
+
+                                          </ul>
+                                      </li>
+                                      <!-- li Derogation -->
+                                      <li id="liDerogation" runat="server">
+                                          <a><i class="fa fa-check"></i> Dérogations <span class="fa fa-chevron-down"></span></a>
+                                          <ul class="nav child_menu">
+                                              <li id="liEnvoiDero" runat="server"><a href="DemanderDerogation.aspx">Envoyer Dérogations</a></li>
+                                              <li id="liafficherDeroInter" runat="server"><a href="DemanderDerogation.aspx">Consulter Dérogations</a></li>
+                                              <li id="liConsulterDero" runat="server"><a href="AfficherDerogation.aspx">Traiter Dérogations</a></li>
+                                              <li id="liafficherDeroGest" runat="server"><a href="AfficherDerogation.aspx">Consulter Dérogations</a></li>
+                                          </ul>
+                                      </li>
+                                      <!-- li Devis -->
+                                      <li id="Devis" runat="server">
+                                          <a><i class="fa fa-dollar"></i> Devis <span class="fa fa-chevron-down"></span></a>
+                                          <ul class="nav child_menu">
+                                              <li id="liDemanderDevis" runat="server"><a href="DemanderDevis.aspx">Demander Devis </a></li>
+                                              <li id="liafficherDevisInter" runat="server"><a href="DemanderDevis.aspx">Consulter Devis</a></li>
+                                              <li id="liTraiterDevis" runat="server"><a href="AfficherDerogation.aspx">Traiter Devis </a></li>
+                                              <li id="liaffixherDevisGest" runat="server"><a href="AfficherDerogation.aspx">Consulter Devis</a></li>
+
+                                          </ul>
+                                      </li>
+                                      <!-- Reclamation -->
+                                      <li id="liReclamation" runat="server">
+                                          <a><i class="fa fa-comment"></i>Reclamations <span class="fa fa-chevron-down"></span></a>
+                                          <ul class="nav child_menu">
+                                              <li id="liEnvoyerReclamation" runat="server"><a href="DemanderReclamation.aspx">Envoyer Réclamtions</a></li>
+                                              <li id="liaffiherReclamation" runat="server"><a href="AfficherReclamation.aspx">Consulter Réclamations</a></li>
+                                          </ul>
+                                      </li>
+                                      <!-- utilisateur -->
+                                      <li id="liGestUser" runat="server">
+                                          <a><i class="fa fa-users"></i> Utilisateurs<span class="fa fa-chevron-down"></span></a>
+                                          <ul class="nav child_menu">
+                                             
+                                              <li><a href="AjouterUser.aspx">Ajouter utilisateurs</a></li>
+                                             
+
+                                          </ul>
+                                      </li>
+                                      <!-- profil -->
+                                      <li id="liGestProfil" runat="server">
+                                          <a><i class="fa fa-user"></i> Profiles <span class="fa fa-chevron-down"></span></a>
+                                          <ul class="nav child_menu">
+                                             
+                                              <li><a href="AjoutProfil.aspx">Ajouter Profiles</a></li>
+                                             
+
+                                          </ul>
+                                      </li>
+                                      <!-- Permission -->
+                                      <li id="liGestPermission" runat="server">
+                                          <a><i class="fa fa-key"></i> Permissions <span class="fa fa-chevron-down"></span></a>
+                                          <ul class="nav child_menu">
+                                           
+                                              <li><a href="AjouterPermission.aspx">Ajouter Permissions</a></li>
+                                         
+                                          </ul>
+                                      </li>
+                                  </ul>
+                              </div>
+                              
+                          </div>
+                          <!-- /sidebar menu -->
+                          <!-- /menu footer buttons -->
+                         <%-- <div class="sidebar-footer hidden-small">
+                              <a data-toggle="tooltip" data-placement="top" title="Settings">
+                                  <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                              </a>
+                              <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+                                  <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+                              </a>
+                              <a data-toggle="tooltip" data-placement="top" title="Lock">
+                                  <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+                              </a>
+                              <a data-toggle="tooltip" data-placement="top" title="Logout" href="login.html">
+                                  <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                              </a>
+                          </div>--%>
+                          <!-- /menu footer buttons -->
+                      </div>
+                  </div>
+                  
+                  <div class="right_col" role="main">
+                    	<div class="breadcrumbs ace-save-state" id="breadcrumbs">
+						<ul class="breadcrumb">
+							<li>
+								<i class="ace-icon fa fa-home home-icon"></i>
+								<a href="#">Accueil</a>
+							</li>
+							
+						</ul><!-- /.breadcrumb -->
+
+						
+					</div>
+                  
+                  
+                  
+                   
+                      <asp:ContentPlaceHolder ID="content" runat="server">
+                         <p>   </p>
+                      </asp:ContentPlaceHolder>
+
+                  </div>
+                  
+                  <footer>
+                      <div class="pull-right">
+                          PORTAIL -SERVICE <a href="https://colorlib.com">ASTREE</a>
+                      </div>
+                      <div class="clearfix"></div>
+                  </footer>
+                 
+              </div>
+          </div>
+
+         
+           <script src="vendors/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- FastClick -->
+    <script src="vendors/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="vendors/nprogress/nprogress.js"></script>
+    <!-- Chart.js -->
+    <script src="vendors/Chart.js/dist/Chart.min.js"></script>
+    <!-- gauge.js -->
+    <script src="vendors/gauge.js/dist/gauge.min.js"></script>
+    <!-- bootstrap-progressbar -->
+    <script src="vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+    <!-- iCheck -->
+    <script src="vendors/iCheck/icheck.min.js"></script>
+    <!-- Skycons -->
+    <script src="vendors/skycons/skycons.js"></script>
+    <!-- Flot -->
+    <script src="vendors/Flot/jquery.flot.js"></script>
+    <script src="vendors/Flot/jquery.flot.pie.js"></script>
+    <script src="vendors/Flot/jquery.flot.time.js"></script>
+    <script src="vendors/Flot/jquery.flot.stack.js"></script>
+    <script src="vendors/Flot/jquery.flot.resize.js"></script>
+    <!-- Flot plugins -->
+    <script src="vendors/flot.orderbars/js/jquery.flot.orderBars.js"></script>
+    <script src="vendors/flot-spline/js/jquery.flot.spline.min.js"></script>
+    <script src="vendors/flot.curvedlines/curvedLines.js"></script>
+    <!-- DateJS -->
+    <script src="vendors/DateJS/build/date.js"></script>
+    <!-- JQVMap -->
+    <script src="vendors/jqvmap/dist/jquery.vmap.js"></script>
+    <script src="vendors/jqvmap/dist/maps/jquery.vmap.world.js"></script>
+    <script src="vendors/jqvmap/examples/js/jquery.vmap.sampledata.js"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="vendors/moment/min/moment.min.js"></script>
+    <script src="vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+    <!-- Custom Theme Scripts -->
+    <script src="build/js/custom.min.js"></script>
+	<style>
+     .widget-box{padding:0;box-shadow:none;margin:3px 0;border:1px solid #CCC}@media only screen and (max-width:767px){.widget-box{margin-top:7px;margin-bottom:7px}}.widget-header{-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box;position:relative;min-height:38px;background:repeat-x #f7f7f7;background-image:-webkit-linear-gradient(top,#FFF 0,#EEE 100%);background-image:-o-linear-gradient(top,#FFF 0,#EEE 100%);background-image:linear-gradient(to bottom,#FFF 0,#EEE 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffeeeeee', GradientType=0);color:#669FC7;border-bottom:1px solid #DDD;padding-left:12px}.widget-box.transparent>.widget-header,.widget-header-flat{filter:progid:DXImageTransform.Microsoft.gradient(enabled=false)}.widget-header:after,.widget-header:before{content:"";display:table;line-height:0}.widget-header:after{clear:right}.widget-box.collapsed>.widget-header{border-bottom-width:0}.collapsed.fullscreen>.widget-header{border-bottom-width:1px}.collapsed>.widget-body{display:none}.widget-header-flat{background:#F7F7F7}.widget-header-large{min-height:49px;padding-left:18px}.widget-header-small{min-height:31px;padding-left:10px}.widget-header>.widget-title{line-height:36px;padding:0;margin:0;display:inline}.widget-header>.widget-title>.ace-icon{margin-right:5px;font-weight:400;display:inline-block}.infobox .infobox-content:first-child,.infobox>.badge,.infobox>.stat,.percentage{font-weight:700}.widget-header-large>.widget-title{line-height:48px}.widget-header-small>.widget-title{line-height:30px}.widget-toolbar{display:inline-block;padding:0 10px;line-height:37px;float:right;position:relative}.widget-header-large>.widget-toolbar{line-height:48px}.widget-header-small>.widget-toolbar{line-height:29px}.widget-toolbar.no-padding{padding:0}.widget-toolbar.padding-5{padding:0 5px}.widget-toolbar:before{display:inline-block;content:"";position:absolute;top:3px;bottom:3px;left:-1px;border:1px solid #D9D9D9;border-width:0 1px 0 0}.popover-notitle+.popover .popover-title,.popover.popover-notitle .popover-title,.widget-toolbar.no-border:before{display:none}.widget-header-large>.widget-toolbar:before{top:6px;bottom:6px}[class*=widget-color-]>.widget-header>.widget-toolbar:before{border-color:#EEE}.widget-color-orange>.widget-header>.widget-toolbar:before{border-color:#FEA}.widget-color-dark>.widget-header>.widget-toolbar:before{border-color:#222;box-shadow:-1px 0 0 rgba(255,255,255,.2),inset 1px 0 0 rgba(255,255,255,.1)}.widget-toolbar label{display:inline-block;vertical-align:middle;margin-bottom:0}.widget-toolbar>.widget-menu>a,.widget-toolbar>a{font-size:14px;margin:0 1px;display:inline-block;padding:0;line-height:24px}.widget-toolbar>.widget-menu>a:hover,.widget-toolbar>a:hover{text-decoration:none}.widget-header-large>.widget-toolbar>.widget-menu>a,.widget-header-large>.widget-toolbar>a{font-size:15px;margin:0 1px}.widget-toolbar>.btn{line-height:27px;margin-top:-2px}.widget-toolbar>.btn.smaller{line-height:26px}.widget-toolbar>.btn.bigger{line-height:28px}.widget-toolbar>.btn-sm{line-height:24px}.widget-toolbar>.btn-sm.smaller{line-height:23px}.widget-toolbar>.btn-sm.bigger{line-height:25px}.widget-toolbar>.btn-xs{line-height:22px}.widget-toolbar>.btn-xs.smaller{line-height:21px}.widget-toolbar>.btn-xs.bigger{line-height:23px}.widget-toolbar>.btn-minier{line-height:18px}.widget-toolbar>.btn-minier.smaller{line-height:17px}.widget-toolbar>.btn-minier.bigger{line-height:19px}.widget-toolbar>.btn-lg{line-height:36px}.widget-toolbar>.btn-lg.smaller{line-height:34px}.widget-toolbar>.btn-lg.bigger{line-height:38px}.widget-toolbar-dark{background:#444}.widget-toolbar-light{background:rgba(255,255,255,.85)}.widget-toolbar>.widget-menu{display:inline-block;position:relative}.widget-toolbar>.widget-menu>a[data-action],.widget-toolbar>a[data-action]{-webkit-transition:transform .1s;-o-transition:transform .1s;transition:transform .1s}.widget-toolbar>.widget-menu>a[data-action]>.ace-icon,.widget-toolbar>a[data-action]>.ace-icon{margin-right:0}.widget-toolbar>.widget-menu>a[data-action]:focus,.widget-toolbar>a[data-action]:focus{text-decoration:none;outline:0}.widget-toolbar>.widget-menu>a[data-action]:hover,.widget-toolbar>a[data-action]:hover{-moz-transform:scale(1.2);-webkit-transform:scale(1.2);-o-transform:scale(1.2);-ms-transform:scale(1.2);transform:scale(1.2)}.widget-body{background-color:#FFF}.widget-main{padding:12px}.widget-main.padding-32{padding:32px}.widget-main.padding-30{padding:30px}.widget-main.padding-28{padding:28px}.widget-main.padding-26{padding:26px}.widget-main.padding-24{padding:24px}.widget-main.padding-22{padding:22px}.widget-main.padding-20{padding:20px}.widget-main.padding-18{padding:18px}.widget-main.padding-16{padding:16px}.widget-main.padding-14{padding:14px}.widget-main.padding-12{padding:12px}.widget-main.padding-10{padding:10px}.widget-main.padding-8{padding:8px}.widget-main.padding-6{padding:6px}.widget-main.padding-4{padding:4px}.widget-main.padding-2{padding:2px}.widget-main.no-padding,.widget-main.padding-0{padding:0}.widget-toolbar .progress{vertical-align:middle;display:inline-block;margin:0}.widget-toolbar>.dropdown,.widget-toolbar>.dropup{display:inline-block}.widget-toolbox.toolbox-vertical,.widget-toolbox.toolbox-vertical+.widget-main{display:table-cell;vertical-align:top}.widget-box>.widget-header>.widget-toolbar>.widget-menu>[data-action=settings],.widget-box>.widget-header>.widget-toolbar>[data-action=settings],.widget-color-dark>.widget-header>.widget-toolbar>.widget-menu>[data-action=settings],.widget-color-dark>.widget-header>.widget-toolbar>[data-action=settings]{color:#99CADB}.widget-box>.widget-header>.widget-toolbar>.widget-menu>[data-action=reload],.widget-box>.widget-header>.widget-toolbar>[data-action=reload],.widget-color-dark>.widget-header>.widget-toolbar>.widget-menu>[data-action=reload],.widget-color-dark>.widget-header>.widget-toolbar>[data-action=reload]{color:#ACD392}.widget-box>.widget-header>.widget-toolbar>.widget-menu>[data-action=collapse],.widget-box>.widget-header>.widget-toolbar>[data-action=collapse],.widget-color-dark>.widget-header>.widget-toolbar>.widget-menu>[data-action=collapse],.widget-color-dark>.widget-header>.widget-toolbar>[data-action=collapse]{color:#AAA}.widget-box>.widget-header>.widget-toolbar>.widget-menu>[data-action=close],.widget-box>.widget-header>.widget-toolbar>[data-action=close],.widget-color-dark>.widget-header>.widget-toolbar>.widget-menu>[data-action=close],.widget-color-dark>.widget-header>.widget-toolbar>[data-action=close]{color:#E09E96}.widget-box[class*=widget-color-]>.widget-header{color:#FFF;filter:progid:DXImageTransform.Microsoft.gradient(enabled=false)}.widget-color-blue{border-color:#307ECC}.widget-color-blue>.widget-header{background:#307ECC;border-color:#307ECC}.widget-color-blue2{border-color:#5090C1}.widget-color-blue2>.widget-header{background:#5090C1;border-color:#5090C1}
+        </style>
+    </form>
+</body>
+</html>
